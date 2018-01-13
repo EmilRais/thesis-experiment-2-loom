@@ -1,0 +1,6 @@
+{
+  "selector": {
+    "name": "response.locals.auth.name",
+    "password": "response.locals.auth.password"
+  }
+}

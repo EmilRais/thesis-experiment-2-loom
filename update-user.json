@@ -1,0 +1,11 @@
+{
+  "selector": {
+    "_id": "request.params.id"
+  },
+  "update": {
+    "$set": {
+      "age": "request.body.age",
+      "password": "request.body.password"
+    }
+  }
+}

@@ -1,0 +1,137 @@
+[
+  {
+    "method": "POST",
+    "path": "/users",
+    "operations": [
+      {
+        "module": "validation",
+        "schema": "user-object-valid",
+        "allowedFields": ["password", "age"]
+      },
+      {
+        "module": "../modules/mongo-lookup",
+        "collection": "users",
+        "query": "user-by-name.json"
+      },
+      {
+        "module": "validation",
+        "schema": "user-name-not-taken"
+      },
+      {
+        "module": "../modules/mongo-store",
+        "collection": "users"
+      },
+      {
+        ""
+      }
+    ]
+  },
+  {
+    "method": "GET",
+    "path": "/users",
+    "operations": [
+      {
+        "module": "validation",
+        "schema": "offset-and-limit-given"
+      },
+      {
+        "module": "../modules/mongo-lookup",
+        "collection": "users",
+        "query": "all-users-paginated.json"
+      },
+      {
+        "module": "../modules/response", "status": 200, "body": "response.locals.boards"
+      }
+    ]
+  },
+  {
+    "method": "GET",
+    "path": "/users/:id",
+    "operations": [
+      {
+        "module": "authorization-parser"
+      },
+      {
+        "module": "../modules/mongo-lookup-one",
+        "collection": "users",
+        "query": "authenticate-user.json"
+      },
+      {
+        "module": "validation",
+        "schema": "param-id-match-login"
+      },
+      {
+        "module": "../modules/response",
+        "status": 200,
+        "body": "response.locals.boards[0]"
+      }
+    ]
+  },
+  {
+    "method": "PUT",
+    "path": "/users/:id",
+    "operations": [
+      {
+        "module": "authorization-parser"
+      },
+      {
+        "module": "../modules/mongo-lookup-one",
+        "collection": "users",
+        "query": "authenticate-user.json",
+        "error": "403",
+        "errorMessage": "Cannot access this resource"
+      },
+      {
+        "module": "validation",
+        "schema": "param-id-match-login"
+      },
+      {
+        "module": "validation",
+        "schema": "user-object-valid",
+        "allowedFields": ["password", "age"]
+      }
+      {
+        "module": "../modules/mongo-update-one",
+        "collection": "users",
+        "query": "update-user.json"
+      },
+      {
+        "module": "../modules/response",
+        "status": 200,
+        "body": null
+      }
+    ]
+  },
+  {
+    "method": "DELETE",
+    "path": "/users/:id",
+    "operations": [
+      {
+        "module": "authorization-parser"
+      },
+      {
+        "module": "../modules/mongo-lookup-one",
+        "collection": "users",
+        "query": "authenticate-user.json",
+        "error": "403",
+        "errorMessage": "Cannot access this resource"
+      },
+      {
+        "module": "validation",
+        "schema": "param-id-match-login"
+      },
+      {
+        "module": "../modules-mongo-delete-one",
+        "collection": "users",
+        "query": "delete-user-query.json",
+        "error": 500,
+        "errorMessage": "Deletion unsuccessful"
+      }
+      {
+        "module": "../modules/response",
+        "status": 200,
+        "body": null
+      }
+    ]
+  }
+]
